@@ -15,7 +15,7 @@ if today in hardcoded_dates:
     headers = {'Authorization': f'token {token}'}
 
     date_str = datetime.now().strftime('%B %d, %Y')
-    issue_title = f"Automated Issue for {date_str}"
+    issue_title = f"Automated Issue for Edge"
     issue_body = "This is an automated issue created on " + date_str
 
     labels = ['service-request']  # Replace with your desired labels
@@ -26,7 +26,7 @@ if today in hardcoded_dates:
         "labels": labels
     }
 
-    response = requests.post(f'https://api.github.com/repos/{repo}/issues', json=data, headers=headers)
+    response = requests.post(f'https://api.github.com/repos/{repo}/issues', json=edge_issue, headers=headers)
 
     if response.status_code == 201:
         print('Issue created successfully')
