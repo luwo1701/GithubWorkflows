@@ -5,13 +5,14 @@ on:
     # Runs every day at midnight (UTC)
  #   - cron: '*/10 * * * *'
   workflow_dispatch:
+permissions:
+  issues: write  # Give write access to issues
 
 jobs:
   create_issue:
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true  # Force Node.js 20
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
