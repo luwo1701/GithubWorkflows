@@ -8,6 +8,34 @@ hardcoded_dates = ['09-16', '09-18', '10-02','10-16', '10-30']  # Add your desir
 # Get today's date
 today = datetime.now().strftime('%m-%d')
 
+# Set up your issue details in a dictionary or list
+issues = [
+    {
+        "title": "Edge Issue",
+        "body": "Edge issue body content",
+        "labels": ["service-request"],
+        "assignees": ["butlerbt"]
+    },
+    {
+        "title": "Cloud Issue",
+        "body": "Cloud issue body content",
+        "labels": ["service-request"],
+        "assignees": ["butlerbt"]
+    },
+    {
+        "title": "Web Issue",
+        "body": "Web issue body content",
+        "labels": ["service-request"],
+        "assignees": ["butlerbt"]
+    },
+    {
+        "title": "Mobile Issue",
+        "body": "Mobile issue body content",
+        "labels": ["service-request"],
+        "assignees": ["butlerbt"]
+    }
+]
+
 # Check if today is in the list of hardcoded dates
 if today in hardcoded_dates:
     repo = os.getenv('GITHUB_REPOSITORY')
@@ -20,18 +48,12 @@ if today in hardcoded_dates:
 
     labels = ['service-request']  # Replace with your desired labels
 
-    edge_issue = {
-        "title": issue_title,
-        "body": issue_body,
-        "labels": labels,
-        "assignees": ["luwo1701"]
-    }
+    for issue in issues:
+        response = requests.post(f'https://api.github.com/repos/{repo}/issues', json=issue, headers=headers)
 
-    response = requests.post(f'https://api.github.com/repos/{repo}/issues', json=edge_issue, headers=headers)
-
-    if response.status_code == 201:
-        print('Issue created successfully')
-    else:
-        print(f'Failed to create issue: {response.content}')
+        if response.status_code == 201:
+            print(f'Successfully created issue: {issue["title"]}')
+        else:
+            print(f'Failed to create issue: {issue["title"]}. Response: {response.content}')
 else:
     print(f"No issue created today. Today is {today}, not one of the hardcoded dates.")
