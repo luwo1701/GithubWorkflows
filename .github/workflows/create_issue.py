@@ -14,7 +14,7 @@ issues = [
         "title": "Edge Issue",
         "body": "Edge issue body content",
         "labels": ["service-request"],
-        "assignees": ["butlerbt"]
+        "assignees": ["luwo1701"]
     },
     {
         "title": "Cloud Issue",
