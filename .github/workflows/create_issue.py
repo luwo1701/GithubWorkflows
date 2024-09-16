@@ -18,9 +18,12 @@ if today in hardcoded_dates:
     issue_title = f"Automated Issue for {date_str}"
     issue_body = "This is an automated issue created on " + date_str
 
-    data = {
+    labels = ['service-request']  # Replace with your desired labels
+
+    edge_issue = {
         "title": issue_title,
-        "body": issue_body
+        "body": issue_body,
+        "labels": labels
     }
 
     response = requests.post(f'https://api.github.com/repos/{repo}/issues', json=data, headers=headers)
