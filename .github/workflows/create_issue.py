@@ -3,7 +3,7 @@ import requests
 from datetime import datetime
 
 # Hardcoded dates for issue creation (format: 'MM-DD')
-hardcoded_dates = ['09-16', '10-05', '12-25']  # Add your desired dates here
+hardcoded_dates = ['09-15', '10-05', '12-25']  # Add your desired dates here
 
 # Get today's date
 today = datetime.now().strftime('%m-%d')
