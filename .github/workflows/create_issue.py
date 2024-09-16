@@ -3,7 +3,7 @@ import requests
 from datetime import datetime
 
 # Hardcoded dates for issue creation (format: 'MM-DD')
-hardcoded_dates = ['09-15', '10-05', '12-25']  # Add your desired dates here
+hardcoded_dates = ['09-16', '09-18', '10-02','10-16', '10-30']  # Add your desired dates here
 
 # Get today's date
 today = datetime.now().strftime('%m-%d')
@@ -23,7 +23,8 @@ if today in hardcoded_dates:
     edge_issue = {
         "title": issue_title,
         "body": issue_body,
-        "labels": labels
+        "labels": labels,
+        "assignees": 'luwo1701'
     }
 
     response = requests.post(f'https://api.github.com/repos/{repo}/issues', json=edge_issue, headers=headers)
