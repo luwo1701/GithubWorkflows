@@ -24,7 +24,7 @@ if today in hardcoded_dates:
         "title": issue_title,
         "body": issue_body,
         "labels": labels,
-        "assignees": ['luwo1701']
+        "assignees": ["luwo1701"]
     }
 
     response = requests.post(f'https://api.github.com/repos/{repo}/issues', json=edge_issue, headers=headers)
