@@ -18,4 +18,4 @@ jobs:
       - name: Run Python Script to Create Issue on Hardcoded Dates
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 create_issue.py
+        run: python3 .github/workflows/create_issue.py
