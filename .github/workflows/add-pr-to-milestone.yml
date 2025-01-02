@@ -1,71 +1,51 @@
-name: Add PR to Milestone
+- name: Add PR to Milestone
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    node <<EOF
+    import { Octokit } from "@octokit/rest";
 
-on:
-  pull_request:
-    types: [closed]
+    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
-jobs:
-  add_to_milestone:
-    if: github.event.pull_request.merged == true && github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
+    (async () => {
+      const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
+      const prNumber = ${GITHUB_EVENT.pull_request.number};
 
-    steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
+      // Fetch the PR details
+      const { data: pr } = await octokit.pulls.get({
+        owner,
+        repo,
+        pull_number: prNumber,
+      });
 
-      - name: Install Dependencies
-        run: npm install @octokit/rest
+      // Define the milestone name
+      const milestoneName = "Current Milestone"; // Replace with your milestone name
 
-      - name: Add PR to Milestone
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          node <<EOF
-          const { Octokit } = require('@octokit/rest');
-          const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+      // Fetch all milestones to find the correct one
+      const { data: milestones } = await octokit.issues.listMilestones({
+        owner,
+        repo,
+        state: "open",
+      });
 
-          (async () => {
-            const owner = process.env.GITHUB_REPOSITORY.split('/')[0];
-            const repo = process.env.GITHUB_REPOSITORY.split('/')[1];
-            const prNumber = process.env.GITHUB_EVENT.pull_request.number;
+      const milestone = milestones.find(m => m.title === milestoneName);
 
-            // Fetch the PR
-            const { data: pr } = await octokit.pulls.get({
-              owner,
-              repo,
-              pull_number: prNumber,
-            });
+      if (!milestone) {
+        console.error(`Milestone "${milestoneName}" not found`);
+        process.exit(1);
+      }
 
-            // Define the milestone name
-            const milestoneName = 'Current Milestone'; // Replace with your milestone name
+      // Add PR to the milestone
+      await octokit.issues.update({
+        owner,
+        repo,
+        issue_number: prNumber,
+        milestone: milestone.number,
+      });
 
-            // Fetch milestones to get ID
-            const { data: milestones } = await octokit.issues.listMilestones({
-              owner,
-              repo,
-              state: 'open',
-            });
-
-            const milestone = milestones.find(m => m.title === milestoneName);
-
-            if (!milestone) {
-              console.error(`Milestone "${milestoneName}" not found`);
-              process.exit(1);
-            }
-
-            // Add PR to the milestone
-            await octokit.issues.update({
-              owner,
-              repo,
-              issue_number: prNumber,
-              milestone: milestone.number,
-            });
-
-            console.log(`PR #${prNumber} added to milestone "${milestoneName}"`);
-          })().catch(err => {
-            console.error(err);
-            process.exit(1);
-          });
-          EOF
+      console.log(`PR #${prNumber} added to milestone "${milestoneName}"`);
+    })().catch(err => {
+      console.error(err);
+      process.exit(1);
+    });
+    EOF
