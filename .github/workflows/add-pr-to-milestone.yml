@@ -1,0 +1,71 @@
+name: Add PR to Milestone
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  add_to_milestone:
+    if: github.event.pull_request.merged == true && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: npm install @octokit/rest
+
+      - name: Add PR to Milestone
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node <<EOF
+          const { Octokit } = require('@octokit/rest');
+          const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+
+          (async () => {
+            const owner = process.env.GITHUB_REPOSITORY.split('/')[0];
+            const repo = process.env.GITHUB_REPOSITORY.split('/')[1];
+            const prNumber = process.env.GITHUB_EVENT.pull_request.number;
+
+            // Fetch the PR
+            const { data: pr } = await octokit.pulls.get({
+              owner,
+              repo,
+              pull_number: prNumber,
+            });
+
+            // Define the milestone name
+            const milestoneName = 'Current Milestone'; // Replace with your milestone name
+
+            // Fetch milestones to get ID
+            const { data: milestones } = await octokit.issues.listMilestones({
+              owner,
+              repo,
+              state: 'open',
+            });
+
+            const milestone = milestones.find(m => m.title === milestoneName);
+
+            if (!milestone) {
+              console.error(`Milestone "${milestoneName}" not found`);
+              process.exit(1);
+            }
+
+            // Add PR to the milestone
+            await octokit.issues.update({
+              owner,
+              repo,
+              issue_number: prNumber,
+              milestone: milestone.number,
+            });
+
+            console.log(`PR #${prNumber} added to milestone "${milestoneName}"`);
+          })().catch(err => {
+            console.error(err);
+            process.exit(1);
+          });
+          EOF
