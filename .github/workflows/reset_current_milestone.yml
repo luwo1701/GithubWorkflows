@@ -26,13 +26,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-
-
-          name: Install dependencies
-        run: pip install PyGithub
-
-      - name: Add PR to Milestone
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-        run: python scripts/make_milestone.py
+        run: python scripts/reset_milestone.py
+        
