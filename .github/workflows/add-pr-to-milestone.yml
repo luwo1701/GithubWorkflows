@@ -1,65 +1,32 @@
 name: Add PR to Milestone
 
 on:
-  pull_request:
+ pull_request:
     types: [closed]
-
+workflow_dispatch:
+  inputs:
+        pr_number:
+          description: 'Pull Request Number to debug'
+          required: true
+          default: ''
 jobs:
-  add_to_milestone:
-    if: ${{ github.event.pull_request.merged == true && github.ref == 'refs/heads/master' }}
+  add-milestone:
     runs-on: ubuntu-latest
-
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install PyGithub
+
       - name: Add PR to Milestone
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          node <<EOF
-          import { Octokit } from "@octokit/rest";
-
-          const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-
-          (async () => {
-            const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
-            const prNumber = ${{
-              github.event.pull_request.number
-            }};
-
-            // Fetch the PR details
-            const { data: pr } = await octokit.pulls.get({
-              owner,
-              repo,
-              pull_number: prNumber,
-            });
-
-            // Define the milestone name
-            const milestoneName = "Current Milestone"; // Replace with your milestone name
-
-            // Fetch all milestones to find the correct one
-            const { data: milestones } = await octokit.issues.listMilestones({
-              owner,
-              repo,
-              state: "open",
-            });
-
-            const milestone = milestones.find((m) => m.title === milestoneName);
-
-            if (!milestone) {
-              console.error(`Milestone "${milestoneName}" not found`);
-              process.exit(1);
-            }
-
-            // Add PR to the milestone
-            await octokit.issues.update({
-              owner,
-              repo,
-              issue_number: prNumber,
-              milestone: milestone.number,
-            });
-
-            console.log(`PR #${prNumber} added to milestone "${milestoneName}"`);
-          })().catch((err) => {
-            console.error(err);
-            process.exit(1);
-          });
-          EOF
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python scripts/make_milestone.py
