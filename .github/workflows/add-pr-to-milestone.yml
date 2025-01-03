@@ -1,14 +1,14 @@
 name: Add PR to Milestone
 
 on:
- pull_request:
+  pull_request:
     types: [closed]
-workflow_dispatch:
-  inputs:
-        pr_number:
-          description: 'Pull Request Number to debug'
-          required: true
-          default: ''
+  workflow_dispatch:
+    inputs:
+          pr_number:
+            description: 'Pull Request Number to debug'
+            required: true
+            default: ''
 jobs:
   add-milestone:
     runs-on: ubuntu-latest
