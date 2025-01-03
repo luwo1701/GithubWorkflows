@@ -22,7 +22,6 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Python Script
-        run: python scripts/make_milestone.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
