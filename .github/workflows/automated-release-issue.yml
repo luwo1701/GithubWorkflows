@@ -17,7 +17,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Determine Sprint Number
+        id: determine_sprint
+        run: |
+          today=$(date +'%Y-%m-%d')
+
+          # Map specific dates to sprint numbers
+          case "$today" in
+            "2025-01-22") sprint_number=50 ;;
+            "2025-01-29") sprint_number=51 ;;
+            "2025-02-05") sprint_number=52 ;;
+            *) sprint_number="Unknown" ;;
+          esac
+
+          echo "Sprint number for today ($today): $sprint_number"
+          echo "sprint_number=$sprint_number" >> $GITHUB_ENV
+
       - name: Run Python Script to Create Issue on Hardcoded Dates
+        if: env.sprint_number != 'Unknown' # Run only if a sprint number is determined
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 .github/workflows/create_issue.py
+          SPRINT_NUMBER: ${{ env.sprint_number }}
+        run: |
+          python3 .github/workflows/create_issue.py
