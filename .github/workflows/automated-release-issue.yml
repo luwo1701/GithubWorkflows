@@ -21,8 +21,10 @@ jobs:
         id: determine_sprint
         run: |
           finalization_date=$(date -d "tomorrow" +'%Y-%m-%d') # create finalization issues the day before the sprint review
+          echo "finalization_date=$finalization_date"
           # Define sprint mapping using an associative array
           declare -A sprint_review_dates=(
+              ["2025-01-28"]=22
               ["2025-02-05"]=23
               ["2025-02-06"]=24
               ["2025-02-19"]=24
