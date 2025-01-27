@@ -20,10 +20,9 @@ jobs:
       - name: Determine Sprint Number
         id: determine_sprint
         run: |
-          tomorrow=$(date -d "tomorrow" +'%Y-%m-%d')
+          finalization_date=$(date -d "tomorrow" +'%Y-%m-%d') # create finalization issues the day before the sprint review
           # Define sprint mapping using an associative array
-          declare -A sprint_dates=(
-              ["2025-01-28"]=23
+          declare -A sprint_review_dates=(
               ["2025-02-05"]=23
               ["2025-02-06"]=24
               ["2025-02-19"]=24
@@ -72,10 +71,14 @@ jobs:
               ["2025-12-18"]=47
               ["2026-01-05"]=47
           )
+          if [[ -n "${sprint_review_dates[$finalization_date]}" ]]; then
+            sprint_number=${sprint_review_dates[$finalization_date]:-"Unknown"}
+          else
+            echo "Don't make a sprint review issue for $finalization_date"
+            exit 0
+          fi
 
-          sprint_number=${sprint_dates[$tomorrow]:-"Unknown"}
-
-          echo "Sprint number for today ($tomorrow): $sprint_number"
+          echo "Sprint number for today ($finalization_date): $sprint_number"
           echo "sprint_number=$sprint_number" >> $GITHUB_ENV
 
       - name: Run Python Script to Create Issue on Hardcoded Dates

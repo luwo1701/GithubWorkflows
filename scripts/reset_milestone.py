@@ -1,8 +1,7 @@
-from github import Github
 import os
+from github import Github
 
 # Set your GitHub repo details
-
 def get_latest_tag(repo):
     tags = repo.get_tags()
     latest_tag = next(tags, None)
