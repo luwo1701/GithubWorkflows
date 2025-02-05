@@ -1,0 +1,32 @@
+name: Add PR to Milestone
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+          pr_number:
+            description: 'Pull Request Number to debug'
+            required: true
+            default: ''
+jobs:
+  add-milestone:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install PyGithub
+
+      - name: Add PR to Milestone
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python scripts/make_milestone.py
