@@ -21,3 +21,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 .github/workflows/create_issue.py
+      - name: Run Python Script to Create Project on Hardcoded Dates
+        run: python3 .github/workflows/new_project.py 5 2024-03-18 2024-03-31
