@@ -37,6 +37,6 @@ jobs:
         if: env.sprint_number != 'Unknown' # Run only if a sprint number is determined
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SPRINT_NUMBER: ${{ env.sprint_number }}
-        run: |
-          python3 .github/workflows/create_issue.py
+        run: python3 .github/workflows/create_issue.py
+      - name: Run Python Script to Create Project on Hardcoded Dates
+        run: python3 .github/workflows/new_project.py 5 2024-03-18 2024-03-31

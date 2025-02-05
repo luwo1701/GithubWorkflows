@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 88
+extend-ignore = E203, W503
+exclude = venv
+
+export SN=B0000D
+scp ./devices/$SN.* root@192.168.86.42:/brandy/
+
+sync
+cd /brandy/
+export SN=B0000D
+echo $SN > SSN
+echo SLISN_$SN > SLISN
+touch /brandy/first_start_bypass_sfis
